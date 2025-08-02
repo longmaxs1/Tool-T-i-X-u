@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tài Xỉu MD5 Checker</title>
+<style>
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        margin-top: 20px;
+        font-size: 28px;
+    }
+    input {
+        padding: 10px;
+        width: 80%;
+        margin: 10px auto;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .dice-container {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .dice {
+        width: 60px;
+        height: 60px;
+        background-size: cover;
+    }
+    .shake {
+        animation: shake 0.5s infinite;
+    }
+    @keyframes shake {
+        0% { transform: translate(0px, 0px) rotate(0deg); }
+        25% { transform: translate(2px, 2px) rotate(5deg); }
+        50% { transform: translate(-2px, -2px) rotate(-5deg); }
+        75% { transform: translate(2px, -2px) rotate(3deg); }
+        100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+    .result {
+        font-size: 28px;
+        margin-top: 20px;
+        font-weight: bold;
+    }
+    .tai { color: lime; text-shadow: 0 0 10px lime; }
+    .xiu { color: red; text-shadow: 0 0 10px red; }
+</style>
+</head>
+<body>
+
+<h1>🎲 Tài Xỉu MD5 Checker</h1>
+<input type="text" id="md5input" placeholder="Nhập MD5..." />
+<br>
+<button onclick="checkResult()">Kiểm tra</button>
+
+<div class="dice-container">
+    <div class="dice" id="dice1"></div>
+    <div class="dice" id="dice2"></div>
+    <div class="dice" id="dice3"></div>
+</div>
+
+<div class="result" id="result"></div>
+
+<audio id="shakeSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
+<script>
+function md5ToNumber(md5, index) {
+    let hex = md5.substr(index * 2, 2);
+    let num = parseInt(hex, 16);
+    return (num % 6) + 1;
+}
+
+function checkResult() {
+    let md5 = document.getElementById("md5input").value.trim();
+    if (md5.length < 6) {
+        alert("Vui lòng nhập MD5 hợp lệ!");
+        return;
+    }
+
+    let diceEls = [document.getElementById("dice1"), document.getElementById("dice2"), document.getElementById("dice3")];
+    diceEls.forEach(d => {
+        d.classList.add("shake");
+        d.style.backgroundImage = "url('https://upload.wikimedia.org/wikipedia/commons/2/26/Dice-1-b.svg')";
+    });
+
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("shakeSound").play();
+
+    setTimeout(() => {
+        let dice1 = md5ToNumber(md5, 0);
+        let dice2 = md5ToNumber(md5, 1);
+        let dice3 = md5ToNumber(md5, 2);
+
+        let sum = dice1 + dice2 + dice3;
+        let resultText = sum >= 11 ? `<span class="tai">TÀI (${sum})</span>` : `<span class="xiu">XỈU (${sum})</span>`;
+
+        diceEls[0].style.backgroundImage = `url('https://upload.wikimedia.org/wikipedia/commons/${dice1}-dice.svg')`;
+        diceEls[1].style.backgroundImage = `url('https://upload.wikimedia.org/wikipedia/commons/${dice2}-dice.svg')`;
+        diceEls[2].style.backgroundImage = `url('https://upload.wikimedia.org/wikipedia/commons/${dice3}-dice.svg')`;
+
+        diceEls.forEach(d => d.classList.remove("shake"));
+        document.getElementById("result").innerHTML = resultText;
+    }, 2000);
+}
+</script>
+
+</body>
+</html>
